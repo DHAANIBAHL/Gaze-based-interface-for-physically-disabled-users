@@ -1,0 +1,83 @@
+## MPII Gaze Dataset – Basic Structure & Preprocessing Guide
+
+📁 Dataset Structure Overview
+
+The dataset is organized like a folder tree. At the top level, everything is divided into different sections based on raw data, processed data, and annotations.
+
+1️⃣ Original Data (Raw Data)
+
+Path example:
+
+`Data → Original → p00 → Day01
+
+p00 → Person ID (participant 00)
+
+Day01 → Data collected on Day 1`
+
+Inside this folder:
+
+👁 Eye Patch Images
+
+👁 Cropped images of the left and right eyes.
+
+These are the main inputs for gaze prediction models.
+
+📝 Annotation
+
+Each eye image has associated metadata:
+
+👁 *Detected eye landmarks*
+Points around the eye (corners, eyelids, etc.).
+
+👁 *On-screen gaze target position (2D)*
+The exact position on the screen where the person was looking.
+
+👁 *3D gaze target position*
+Gaze position in 3D space.
+
+👁 *Estimated 3D head pose*
+Direction and rotation of the head.
+
+So basically, for each image you get:
+
+Eye Image + Gaze Location + Head Direction
+2️⃣ Calibration Data
+
+This is mainly used if you want precise 3D gaze estimation or screen coordinate mapping.
+
+3️⃣ Normalized Eye Images
+
+4️⃣ 5-Point Based 3D Face Model
+
+A simplified 3D face model using 5 key facial landmarks.
+
+Used for:
+
+👁 Head pose estimation
+
+👁 3D alignment
+
+5️⃣ Evaluation Subset
+
+Contains:
+
+Image list only
+
+Used for:
+
+Testing and benchmarking models
+
+6️⃣ Annotation Subset
+
+Contains:
+
+Image list
+
+Facial landmark annotations
+
+Useful if you want to:
+
+Train a landmark detection model
+
+Perform additional facial feature analysis
+
