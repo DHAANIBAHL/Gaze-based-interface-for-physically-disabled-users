@@ -67,17 +67,5 @@ Used for:
 
 Testing and benchmarking models
 
-6️⃣ Annotation Subset
 
-Contains:
-
-Image list
-
-Facial landmark annotations
-
-Useful if you want to:
-
-Train a landmark detection model
-
-Perform additional facial feature analysis
 
