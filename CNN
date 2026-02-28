@@ -1,0 +1,63 @@
+from google.colab import drive
+drive.mount('/content/drive')
+
+!ls "/content/drive/MyDrive/Gaze detection/"
+
+import os
+
+print(os.path.exists("/content/drive/MyDrive/Gaze detection/X_mpiigaze_normalized.mat"))
+print(os.path.exists("/content/drive/MyDrive/Gaze detection/Y_mpiigaze_gaze.mat"))
+
+print(os.path.getsize("/content/drive/MyDrive/Gaze detection/Y_mpiigaze_gaze.mat"))
+
+import h5py
+import numpy as np
+
+X_path = "/content/drive/MyDrive/Gaze detection/X_mpiigaze_normalized.mat"
+X_file = h5py.File(X_path, 'r')
+
+print(list(X_file.keys()))
+
+print(X_file['X'].shape)
+
+import scipy.io
+
+Y_path = "/content/drive/MyDrive/Gaze detection/Y_mpiigaze_gaze.mat"
+Y_data = scipy.io.loadmat(Y_path)
+
+print(Y_data.keys())  # just to confirm
+
+Y = Y_data['Y']       # make sure the key is correct
+print(Y.shape)
+
+X_dataset = X_file['X']
+
+import numpy as np
+
+indices = np.random.choice(len(X_dataset), 20000, replace=False)
+indices = np.sort(indices)
+
+X_sample = X_dataset[indices].astype("float32") / 255.0
+Y_sample = Y[indices]
+
+print(X_sample.shape)
+print(Y_sample.shape)
+
+X_sample = X_sample.reshape(-1, 64, 64, 1)
+print(X_sample.shape)
+Y_sample = Y[indices]
+print(Y_sample.shape)
+
+from sklearn.model_selection import train_test_split
+
+X_train, X_test, Y_train, Y_test = train_test_split(
+    X_sample, Y_sample,
+    test_size=0.2,
+    random_state=42
+)
+
+print(X_train.shape)
+print(Y_train.shape)
+
+import numpy as np
+print(np.mean(np.linalg.norm(Y_sample, axis=1)))
