@@ -61,3 +61,90 @@ print(Y_train.shape)
 
 import numpy as np
 print(np.mean(np.linalg.norm(Y_sample, axis=1)))
+
+import sys
+print(sys.executable)
+!{sys.executable} -m pip install tensorflow-cpu
+
+import tensorflow as tf
+from tensorflow.keras import layers
+
+def cosine_loss(y_true, y_pred):
+    dot = tf.reduce_sum(y_true * y_pred, axis=1)
+    return 1 - tf.reduce_mean(dot)
+
+model = tf.keras.Sequential([
+
+    layers.Conv2D(32, (3,3), padding='same', input_shape=(64,64,1)),
+    layers.BatchNormalization(),
+    layers.Activation('relu'),
+    layers.MaxPooling2D(2,2),
+
+    layers.Conv2D(64, (3,3), padding='same'),
+    layers.BatchNormalization(),
+    layers.Activation('relu'),
+    layers.MaxPooling2D(2,2),
+
+    layers.Conv2D(128, (3,3), padding='same'),
+    layers.BatchNormalization(),
+    layers.Activation('relu'),
+    layers.MaxPooling2D(2,2),
+
+    layers.Conv2D(256, (3,3), padding='same'),
+    layers.BatchNormalization(),
+    layers.Activation('relu'),
+    layers.MaxPooling2D(2,2),
+
+    layers.GlobalAveragePooling2D(),
+
+    layers.Dense(256),
+    layers.BatchNormalization(),
+    layers.Activation('relu'),
+    layers.Dropout(0.4),
+
+    layers.Dense(3),
+    layers.Lambda(lambda x: tf.math.l2_normalize(x, axis=1))
+])
+
+model.compile(
+    optimizer=tf.keras.optimizers.Adam(learning_rate=0.0001),
+    loss=cosine_loss
+)
+
+model.summary()
+
+model.add(layers.Dense(128, activation='relu'))
+model.add(layers.Dropout(0.3))
+model.add(layers.Dense(3))
+model.add(layers.Lambda(lambda x: tf.math.l2_normalize(x, axis=1)))
+
+def cosine_loss(y_true, y_pred):
+    dot = tf.reduce_sum(y_true * y_pred, axis=1)
+    return 1 - tf.reduce_mean(dot)
+
+model.compile(
+    optimizer=tf.keras.optimizers.Adam(learning_rate=0.0003),
+    loss=cosine_loss
+)
+
+history = model.fit(
+    X_train, Y_train,
+    epochs=10,
+    batch_size=32,
+    validation_data=(X_test, Y_test),
+    verbose=1
+)
+
+import numpy as np
+
+pred = model.predict(X_test)
+
+dot = np.sum(pred * Y_test, axis=1)
+dot = np.clip(dot, -1.0, 1.0)
+angles = np.arccos(dot)
+
+mean_error_deg = np.mean(angles) * 180 / np.pi
+print("Mean Angular Error (degrees):", mean_error_deg)
+
+
+
